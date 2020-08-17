@@ -5,12 +5,13 @@ class Metronome:
 	def __init__(self, bpm): # TODO, 1st note, time signature
 		self.bpm = bpm
 		self.sampleRate = 20000.0 # Hz
+		self.metronomeHz = int(self.sampleRate * (60/self.bpm))
 		self.duration = 300000 # in frames
 
 	def writeWavData(self, wav):
 		for i in range(self.duration):
 			value = -32767
-			if(i%self.sampleRate == 0):
+			if(i%self.metronomeHz == 0):
 				value = 32676
 			data = struct.pack('<h', value)
 			wav.writeframes( data )
@@ -26,5 +27,5 @@ class Metronome:
 		self.writeWavData(wav)
 
 if __name__ == "__main__":
-	m = Metronome(1)
+	m = Metronome(100)
 	m.createWav()
