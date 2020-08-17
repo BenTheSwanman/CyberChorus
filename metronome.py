@@ -1,19 +1,30 @@
-import wave, struct, math, random
+import wave, struct, math
 
-sampleRate=20000.0 #Hz
 
-obj = wave.open('sound.wav', 'w')
-obj.setnchannels(1) # mono
-obj.setsampwidth(2)
-obj.setframerate(sampleRate)
+class Metronome:
+	def __init__(self, bpm): # TODO, 1st note, time signature
+		self.bpm = bpm
+		self.sampleRate = 20000.0 # Hz
+		self.duration = 300000 # in frames
 
-duration = 299999
+	def writeWavData(self, wav):
+		for i in range(self.duration):
+			value = -32767
+			if(i%self.sampleRate == 0):
+				value = 32676
+			data = struct.pack('<h', value)
+			wav.writeframes( data )
+		wav.close()
 
-for i in range(299999):
-	value=0
-	if(i%sampleRate == 0):
-		value = 32767
-	data=struct.pack('<h', value)
-	obj.writeframesraw( data )
+	def createWav(self):
+		# Setup metadata and file
+		wav = wave.open('metronome.wav', 'w')
+		wav.setnchannels(1) # mono
+		wav.setsampwidth(2)
+		wav.setframerate(self.sampleRate)
 
-obj.close()
+		self.writeWavData(wav)
+
+if __name__ == "__main__":
+	m = Metronome(1)
+	m.createWav()
